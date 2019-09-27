@@ -38,22 +38,22 @@
   <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.1">
 
 
-<meta name="description" content="0x01 前言 前几天晚上在某安全群里留出phpstudy后门RCE，今天抽空复现，记录自己复现与踩坑的过程。 0x02 漏洞环境靶机环境：Windows7 SP1 x64 攻击环境：Windows10 虚拟机软件：Vmware 15 Pro（其他虚拟机软件均可） phpstudy版本：phpStudy20161103 0x03 后门查找存在后门的phpStudy版本有 2016、2018。PHP">
+<meta name="description" content="title: phpstudy后门复现与踩坑 date: 2019-09-28 00:36:57 categories: 漏洞复现 tags: RCE 0x01 前言前几天晚上在某安全群里留出phpstudy后门RCE，今天抽空复现，记录自己复现与踩坑的过程。 0x02 漏洞环境靶机环境：Windows7 SP1 x64 攻击环境：Windows10 虚拟机软件：Vmware 15 Pro（其他虚">
 <meta name="keywords" content="Evi10x01&#39;s blog | 渗透 | 内网渗透 | 安全">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Evi10x01&#39;s blog">
 <meta property="og:url" content="http://yoursite.com/2019/09/28/phpstudy后门复现与踩坑/index.html">
 <meta property="og:site_name" content="Evi10x01&#39;s blog">
-<meta property="og:description" content="0x01 前言 前几天晚上在某安全群里留出phpstudy后门RCE，今天抽空复现，记录自己复现与踩坑的过程。 0x02 漏洞环境靶机环境：Windows7 SP1 x64 攻击环境：Windows10 虚拟机软件：Vmware 15 Pro（其他虚拟机软件均可） phpstudy版本：phpStudy20161103 0x03 后门查找存在后门的phpStudy版本有 2016、2018。PHP">
+<meta property="og:description" content="title: phpstudy后门复现与踩坑 date: 2019-09-28 00:36:57 categories: 漏洞复现 tags: RCE 0x01 前言前几天晚上在某安全群里留出phpstudy后门RCE，今天抽空复现，记录自己复现与踩坑的过程。 0x02 漏洞环境靶机环境：Windows7 SP1 x64 攻击环境：Windows10 虚拟机软件：Vmware 15 Pro（其他虚">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://yoursite.com/images/1569600523329.png">
 <meta property="og:image" content="http://yoursite.com/images/1569601161609.png">
 <meta property="og:image" content="http://yoursite.com/images/1569601277998.png">
 <meta property="og:image" content="http://yoursite.com/images/1569601338139.png">
-<meta property="og:updated_time" content="2019-09-27T16:33:54.728Z">
+<meta property="og:updated_time" content="2019-09-27T16:38:33.472Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Evi10x01&#39;s blog">
-<meta name="twitter:description" content="0x01 前言 前几天晚上在某安全群里留出phpstudy后门RCE，今天抽空复现，记录自己复现与踩坑的过程。 0x02 漏洞环境靶机环境：Windows7 SP1 x64 攻击环境：Windows10 虚拟机软件：Vmware 15 Pro（其他虚拟机软件均可） phpstudy版本：phpStudy20161103 0x03 后门查找存在后门的phpStudy版本有 2016、2018。PHP">
+<meta name="twitter:description" content="title: phpstudy后门复现与踩坑 date: 2019-09-28 00:36:57 categories: 漏洞复现 tags: RCE 0x01 前言前几天晚上在某安全群里留出phpstudy后门RCE，今天抽空复现，记录自己复现与踩坑的过程。 0x02 漏洞环境靶机环境：Windows7 SP1 x64 攻击环境：Windows10 虚拟机软件：Vmware 15 Pro（其他虚">
 <meta name="twitter:image" content="http://yoursite.com/images/1569600523329.png">
 
 
@@ -382,17 +382,16 @@
       
 
       
-        <span itemprop="articleBody"><p>0x01 前言</p>
-<p>前几天晚上在某安全群里留出phpstudy后门RCE，今天抽空复现，记录自己复现与踩坑的过程。</p>
+        <span itemprop="articleBody"><p>title: phpstudy后门复现与踩坑</p>
+<p>date: 2019-09-28 00:36:57</p>
+<p>categories: 漏洞复现</p>
+<p>tags: RCE</p>
+<h1 id="0x01-前言"><a href="#0x01-前言" class="headerlink" title="0x01 前言"></a>0x01 前言</h1><p>前几天晚上在某安全群里留出phpstudy后门RCE，今天抽空复现，记录自己复现与踩坑的过程。</p>
 <h1 id="0x02-漏洞环境"><a href="#0x02-漏洞环境" class="headerlink" title="0x02 漏洞环境"></a>0x02 漏洞环境</h1><p>靶机环境：Windows7 SP1 x64</p>
 <p>攻击环境：Windows10</p>
 <p>虚拟机软件：Vmware 15 Pro（其他虚拟机软件均可）</p>
 <p>phpstudy版本：phpStudy20161103</p>
 <h1 id="0x03-后门查找"><a href="#0x03-后门查找" class="headerlink" title="0x03 后门查找"></a>0x03 后门查找</h1><p>存在后门的phpStudy版本有 2016、2018。PHP版本：5.2.17、5.4.45</p>
-<p>2.重载模块：reload_all</p>
-<p>3.检测漏洞：use auxiliary/scanner/rdp/cve_2019_0708_bluekeep</p>
-<p>4.设置靶机：set rhosts ip</p>
-<p>5.验证检测：exploit</p>
 <p>检查php\php-5.2.17\ext ； php\php-5.2.17\ext文件夹下各个dll文件，发现在5.2.17、5.4.45版本的php_xmlrpc.dll存在问题。</p>
 <p>用记事本打开存在问题的dll，搜索eval就找到我们想看的后门。</p>
 <p><img src="/images/1569600523329.png" alt></p>
@@ -569,7 +568,7 @@
           <div class="post-toc">
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#0x02-漏洞环境"><span class="nav-number">1.</span> <span class="nav-text">0x02 漏洞环境</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x03-后门查找"><span class="nav-number">2.</span> <span class="nav-text">0x03 后门查找</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x04-复现过程"><span class="nav-number">3.</span> <span class="nav-text">0x04 复现过程</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x05-结语"><span class="nav-number">4.</span> <span class="nav-text">0x05 结语</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#0x01-前言"><span class="nav-number">1.</span> <span class="nav-text">0x01 前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x02-漏洞环境"><span class="nav-number">2.</span> <span class="nav-text">0x02 漏洞环境</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x03-后门查找"><span class="nav-number">3.</span> <span class="nav-text">0x03 后门查找</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x04-复现过程"><span class="nav-number">4.</span> <span class="nav-text">0x04 复现过程</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x05-结语"><span class="nav-number">5.</span> <span class="nav-text">0x05 结语</span></a></li></ol></div>
             
           </div>
           <div class="post-toc-indicator-bottom post-toc-indicator"></div>
